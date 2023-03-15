@@ -1,0 +1,11 @@
+emp_name,work_team,worked_hours_per_moth,worked_hours_on_project_per_month,email,twofactor_authentication_enabled
+Daniel Madr,A,160,80,dan.madr@firmax.cz,True
+Martin Levy,B,160,72,martin.levy@firmax.cz,True
+Katerina Dobra,A,155,49,kacka.dobra@firmax.cz,False
+Lubos Kryl,C,146,90,lubos.kryl@firmax.cz,True
+Marian Lakota,B,125,65,marian.lakota@firmax.cz,False
+Ondrej Grohman,C,90,73,ondrej.grohman@firmax.cz,True
+Lucie Pandayen,A,170,100,lucka.pandayen@firmax.cz,True
+Elias Zdravy,C,189,120,elias.zdravy@firmax.cz,True
+Jitka Novotna,A,160,58,jitka.novotna@firmax.cz,False
+Marie Brezinova,A,160,45,marie.brezinova@firmax.cz,False
