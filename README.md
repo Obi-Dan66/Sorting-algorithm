@@ -53,42 +53,41 @@ První část v souboru data model.jpg v tomto repozitáři.
 
 Komentář:
 
-data model.jpg obsahuje tabulky se čtyřmi základními entitami Klient, Transakce, Účet a Balance. Dále obsahuje vedlejší entitu Typ transakce.
-Každý atribut má i doporučený datový typ, popřípadě poznámku zda je vhodné u atributu využít funkci NULL.
-
-Tabulka Klient - atributy (client_id(PK), first_name, last_name, client_adress, phone_number, client_email)\
-Tabulka Účet - atributy (account_id(PK), account_type, client_id(FK-ref tab Klient,1-N), account_opening_day, account_status, account_balance)\
-Tabulka Transakce - atributy (transaction_id(PK), transaction_date, account_id(FK-ref tab Účet, 1-N), transaction_type(FK-ref tab Typ transakce,1-1), transaction_amount, transaction description)\
-Tabulka Balance - atributy (record_id(PK), account_id(FK-ref tab Účet, 1-1), principal_amount, interest_amount, fees_amount)\
-Tabulka Typ transakce - atributy (transaction_type(PK), type_name)
+data model.jpg obsahuje tabulky se čtyřmi základními entitami Klient, Transakce, Účet a Balance. Dále obsahuje vedlejší entitu Typ transakce a Produkt. Každý atribut má i doporučený datový typ, popřípadě poznámku zda je vhodné u atributu využít funkci NULL.
 
 ### Druhá část: SQL queries
 
 > Postavte dotaz, který vybere všechny klienty (např. id_klient, jméno a příjmení) pro něž bude platit, že\
 > suma jistin všech jejich účtů na konci měsíce bude větší než číslo c.
 
-SELECT Klient.cliet_id, Klient.first_name, Klient.last_name\
-FROM Klient\
-INNER JOIN Účet ON Klient.client_id = Účet.client_id\
-INNER JOIN (\
-  SELECT account_id, SUM(principal_amount) AS sum_principal_amount\
-  FROM Balance\
-  WHERE record_date = LAST_DAY(CURRENT_DATE)\
-  GROUP BY account_id\
-)
-AS month_balance ON Účet.account_id = month_balance.account_id\
-WHERE month_balance.sum_principal_amount > c;
+SELECT k.client_id, k.first_name, k.last_name\
+FROM Klient k\
+JOIN (\
+  SELECT client_id, SUM(principal_amount) as sum_b\
+  FROM Klient k\
+  JOIN Účet u on k.client_id = u.account_id\
+  JOIN Produkt p on p.produkt_id = u.account_id\
+  JOIN Balance b on b.record_id = p.product_id\
+  WHERE DAY (record_date) = DAY(LAST_DATE(CURRENT_DATE))\
+  GROUP BY client_id\
+  HAVING SUM(principal_amount) > c\
+) sums\
+ON k.client_id = sums.client_id\
+;
 
 > Postavte dotaz, který zobrazí 10 klientů s maximální celkovou výší pohledávky (suma všech pohledávek klienta)\
 > k ultimu měsíce a tuto na konci řádku vždy zobrazte.
 
-SELECT Klient.cliet_id, Klient.first_name, Klient.last_name,\
-SUM(Balance.principal_amount + Balance.interest_amount + Balance.fees_amount)\
-AS total_amount\
-FROM Klient\
-INNER JOIN Účet ON Klient.client_id = Účet.client_id\
-INNER JOIN Balance ON Účet.account_id = Balance.account_id\
-WHERE Balance.record_date = LAST_DAY(CURRENT_DATE)\
-GROUP BY Klient.client_id\
-ORDER BY total_amount DESC\
-LIMIT 10;
+SELECT k.first_name, k.last_name, sum_b\
+FROM Klient k\
+JOIN (\
+  SELECT client_id, SUM(account_balance) as sum_b\
+  FROM Klient k\
+  JOIN Účet u on k.client_id = u.account_id\
+  WHERE DAY (record_date) = DAY(LAST_DATE(CURRENT_DATE))\
+  GROUP BY client_id\
+) sums\
+ON k.client_id = sums.client_id\
+ORDER BY sum_b DESC\
+LIMIT 10\
+;
