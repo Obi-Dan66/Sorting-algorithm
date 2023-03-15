@@ -10,10 +10,6 @@ def utilization_rule(user):
     utilization = float(user['worked_hours_on_project_per_month']) / float(user['worked_hours_per_moth'])
     return utilization < 0.5
 
-# Define a function to check if two-factor authentication is enabled
-def two_factor_enabled(user):
-    return user[two_fa] == 'True'
-
 # Define a function to check if two-factor authentication is disabled
 def two_factor_disabled(user):
     return user[two_fa] == 'False'
