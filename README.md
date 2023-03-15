@@ -80,10 +80,12 @@ ON k.client_id = sums.client_id\
 
 SELECT k.first_name, k.last_name, sum_b\
 FROM Klient k\
-JOIN (\
-  SELECT client_id, SUM(account_balance) as sum_b\
+JOIN (JOIN\
+  SELECT client_id, SUM(balance_amount) as sum_b\
   FROM Klient k\
   JOIN Účet u on k.client_id = u.account_id\
+  JOIN Produkt p on p.produkt_id = u.account_id\
+  JOIN Balance b on b.record_id = p.product_id\
   WHERE DAY (record_date) = DAY(LAST_DATE(CURRENT_DATE))\
   GROUP BY client_id\
 ) sums\
