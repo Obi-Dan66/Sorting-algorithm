@@ -90,5 +90,5 @@ INNER JOIN Účet ON Klient.client_id = Účet.client_id\
 INNER JOIN Balance ON Účet.account_id = Balance.account_id\
 WHERE Balance.record_date = LAST_DAY(CURRENT_DATE)\
 GROUP BY Klient.client_id\
-ORDER BY total_amount_receivable DESC\
+ORDER BY total_amount DESC\
 LIMIT 10;
