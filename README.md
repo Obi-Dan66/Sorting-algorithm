@@ -65,11 +65,11 @@ FROM Klient k\
 JOIN (\
   SELECT client_id, SUM(principal_amount) as sum_b\
   FROM Klient k\
-  JOIN Účet u on k.client_id = u.account_id\
-  JOIN Produkt p on p.produkt_id = u.account_id\
-  JOIN Balance b on b.record_id = p.product_id\
+  JOIN Účet u on k.client_id = u.client_id\
+  JOIN Produkt p on p.account_id = u.account_id\
+  JOIN Balance b on b.product_id = p.product_id\
   WHERE DAY (record_date) = DAY(LAST_DATE(CURRENT_DATE))\
-  GROUP BY client_id\
+  GROUP BY k.client_id\
   HAVING SUM(principal_amount) > c\
 ) sums\
 ON k.client_id = sums.client_id\
@@ -81,13 +81,13 @@ ON k.client_id = sums.client_id\
 SELECT k.first_name, k.last_name, sum_b\
 FROM Klient k\
 JOIN (JOIN\
-  SELECT client_id, SUM(balance_amount) as sum_b\
+  SELECT client_id, SUM(b.balance_amount) as sum_b\
   FROM Klient k\
-  JOIN Účet u on k.client_id = u.account_id\
-  JOIN Produkt p on p.produkt_id = u.account_id\
-  JOIN Balance b on b.record_id = p.product_id\
-  WHERE DAY (record_date) = DAY(LAST_DATE(CURRENT_DATE))\
-  GROUP BY client_id\
+  JOIN Účet u on k.client_id = u.client_id\
+  JOIN Produkt p on p.account_id = u.account_id\
+  JOIN Balance b on b.product_id = p.product_id\
+  WHERE DAY (b.record_date) = DAY(LAST_DATE(CURRENT_DATE))\
+  GROUP BY k.client_id\
 ) sums\
 ON k.client_id = sums.client_id\
 ORDER BY sum_b DESC\
