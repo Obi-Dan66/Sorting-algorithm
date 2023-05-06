@@ -1,5 +1,3 @@
-# hiring-task-epptec
-
 ## 1. Zadání
 Algoritmus
 
